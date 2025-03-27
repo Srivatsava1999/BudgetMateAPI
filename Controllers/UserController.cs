@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using api.Data;
 using api.Models;
+using api.Services;
 using System.Collections.Generic;
-using System.Linq
+using System.Linq;
 
 namespace api.Controllers
 {
@@ -10,23 +11,21 @@ namespace api.Controllers
     [Route("api/[controller]")]
     public class UserController:ControllerBase
     {
-        private readonly AppDbContext _context;
-        public UserContoller(AppDbContext context)
-        {
-            _context=context;
-        }
+        private UserServices _service;
+        public UserController(UserServices service){
+            _service=service;
 
+        }
         [HttpGet]
         public ActionResult<IEnumerable<User>> GetAllUsers()
         {
-            var users=_context.Users.ToList();
-            return Ok(users);
+            return Ok(_service.AllUsers());
         }
         [HttpGet("{id}")]
         public ActionResult<User> GetUserById(int id)
         {
-            var user = _context.Users.Find(id);
-            if(user==null)
+            var user=_service.UserById(id);
+            if (user==null)
                 return NotFound();
             
             return Ok(user);
@@ -34,35 +33,24 @@ namespace api.Controllers
         [HttpPost]
         public ActionResult<User> CreateUser(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-
+            _service.CreateUser(user);
             return CreatedAtAction(nameof(GetUserById), new{ id=user.UserId}, user);
         }
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, User updatedUser)
+        public IActionResult UpdateUser(int id, User updateduser)
         {
-            var user=_context.Users.Find(id);
+            var user=_service.UpdateUser(id, updateduser);
             if(user==null)
                 return NotFound();
-            
-            user.Name=updatedUser.Name;
-            user.Password=updatedUser.Password;
-            user.Phone=updatedUser.Phone;
-            user.Email=updatedUser.Email;
-
-            _context.SaveChnages();
-            return NoContent();
+            return Ok();
         }
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(int id)
-        [
-            var user=_context.Users.Find(id);
+        {
+            var user=_service.DeleteUser(id);
             if(user==null)
                 return NotFound();
-            _context.Users.Remove(user);
-            _context.SaveChanges();
             return NoContent();
-        ]
+        }
     }
 }
