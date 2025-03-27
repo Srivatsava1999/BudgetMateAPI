@@ -15,10 +15,7 @@ namespace api.Services{
         }
         public List<Budget> AllBudget(int UserId){
             var BudgetPlan=_context.Budget.Where(b=>b.UserId==UserId).ToList();
-            if (BudgetPlan==null)
-                return null;
-
-            return BudgetPlan;
+            return BudgetPlan ?? new List<Budget>();
         }
         public Budget BudgetById(int userid, int budgetid){
             var BudgetPlan=_context.Budget.Find(budgetid);
@@ -51,11 +48,11 @@ namespace api.Services{
             var ExpenseToDelete=_context.Expense.Where(e=>e.BudgetId==id).ToList();
             var SavingToDelete=_context.Saving.Where(s=>s.BudgetId==id).ToList();
             _context.Budget.Remove(budget);
-            if (IncomeToDelete.count>0)
+            if (IncomeToDelete.Count()>0)
                 _context.Income.RemoveRange(IncomeToDelete);
-            if (ExpenseToDelete.count>0)
+            if (ExpenseToDelete.Count()>0)
                 _context.Expense.RemoveRange(ExpenseToDelete);
-            if (SavingToDelete.count>0)
+            if (SavingToDelete.Count()>0)
                 _context.Saving.RemoveRange(SavingToDelete);
             _context.SaveChanges();
             return budget;

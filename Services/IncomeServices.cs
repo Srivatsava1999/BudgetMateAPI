@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using api.Data;
 using api.Models;
 using api.Services;
-using System.Collections.Generics;
-using Sytem.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace api.Services{
     public class IncomeServices{
@@ -15,10 +15,7 @@ namespace api.Services{
         }
         public List<Income> AllIncome(int BudgetId){
             var IncomePlan=_context.Income.Where(i=>i.BudgetId==BudgetId).ToList();
-            if (IncomePlan==null)
-                return null;
-
-            return IncomePlan;
+            return IncomePlan ?? new List<Budget>();
         }
         public Income IncomeById(int budgetid, int Incomeid){
             var IncomePlan=_context.Income.Find(Incomeid);
@@ -30,7 +27,7 @@ namespace api.Services{
             _context.Income.Add(Income);
             var BudgetPlan=_context.Budget.Find(Income.BudgetId);
             BudgetPlan.TotalIncome=BudgetPlan.TotalIncome+Income.IncomeAmount;
-            _BudgetPlan.UpdateBudget(Income.BudgetId, BudgetPlan);
+            _BudgetService.UpdateBudget(Income.BudgetId, BudgetPlan);
             _context.SaveChanges();
         }
         public Income UpdateIncome(int id, Income updates){
@@ -45,7 +42,7 @@ namespace api.Services{
             Income.RecurringFlag=updates.RecurringFlag;
             var BudgetPlan=_context.Budget.Find(Income.BudgetId);
             BudgetPlan.TotalIncome=BudgetPlan.TotalIncome+Income.IncomeAmount;
-            _BudgetPlan.UpdateBudget(Income.BudgetId, BudgetPlan);
+            _BudgetService.UpdateBudget(Income.BudgetId, BudgetPlan);
             _context.SaveChanges();
             return Income;
         }
@@ -55,7 +52,7 @@ namespace api.Services{
                 return null;
             var BudgetPlan=_context.Budget.Find(Income.BudgetId);
             BudgetPlan.TotalIncome=BudgetPlan.TotalIncome-Income.IncomeAmount;
-            _BudgetPlan.UpdateBudget(Income.BudgetId, BudgetPlan);
+            _BudgetService.UpdateBudget(Income.BudgetId, BudgetPlan);
             _context.Income.Remove(Income);
             _context.SaveChanges();
             return Income;

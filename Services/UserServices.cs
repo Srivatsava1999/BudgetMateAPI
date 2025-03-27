@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using api.Models;
 using api.Data;
+using api.Services;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace api.Services{
     public class UserServices{
         private readonly AppDbContext _context;
-        public UserServices(AppDbContext context){
+        private BudgetServices _BudgetService;
+        public UserServices(AppDbContext context, BudgetServices BudgetService){
             _context=context;
+            _BudgetService=BudgetService;
         }
         public List<User> UserAll(){
             var users=_context.Users.ToList();
@@ -41,7 +44,10 @@ namespace api.Services{
             var user=_context.Users.Find(id);
             if(user==null)
                 return null;
+            var BudgetToDelete=_context.Budget.Where(b=>b.UserId==id).ToList();
             _context.Users.Remove(user);
+            if (BudgetToDelete.Count()>0)
+                _context.Budget.RemoveRange(BudgetToDelete);
             _context.SaveChanges();
             return user;
         }

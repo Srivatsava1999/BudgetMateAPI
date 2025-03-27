@@ -2,8 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using api.Data;
 using api.Models;
 using api.Services;
-using System.Collections.Generics;
-using Sytem.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace api.Services{
     public class SavingServices{
@@ -15,10 +15,7 @@ namespace api.Services{
         }
         public List<Saving> AllSaving(int BudgetId){
             var SavingAccount=_context.Saving.Where(i=>i.BudgetId==BudgetId).ToList();
-            if (SavingAccount==null)
-                return null;
-
-            return SavingAccount;
+            return SavingAccount ?? new List<Budget>();
         }
         public Saving SavingById(int budgetid, int Savingid){
             var SavingAccount=_context.Saving.Find(Savingid);
