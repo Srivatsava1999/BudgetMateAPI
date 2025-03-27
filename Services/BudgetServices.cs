@@ -1,14 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
 using api.Models;
 using api.Data;
+using api.Serivces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace api.Services{
     public class BudgetServices{
         private readonly AppDbContext _context;
-        public BudgetServices(AppDbContext context){
+        private SavingServices _SavingServices;
+        public BudgetServices(AppDbContext context, SavingServices SavingServices){
             _context=context;
+            _SavingServices=SavingServices;
         }
         public List<Budget> AllBudget(int UserId){
             var BudgetPlan=_context.Budget.Where(b=>b.UserId==UserId).ToList();
@@ -35,7 +38,8 @@ namespace api.Services{
             budget.TotalIncome=updates.TotalIncome;
             budget.TotalExpense=updates.TotalExpense;
             budget.MonthlyNet=updates.TotalIncome - updates.TotalExpense;
-
+            var SavingAccount=_context.Saving.Where(s=>s.BudgetId==budget.BudgetId);
+            _SavingServices.UpdateSaving(SavingAccount.SavingId, SavingAccount);
             _context.SaveChanges();
             return budget;
         }
@@ -43,10 +47,19 @@ namespace api.Services{
             var budget=_context.Budget.Find(id);
             if (budget==null)
                 return null;
-            
+            var IncomeToDelete=_context.Income.Where(i=>i.BudgetId==id).ToList();
+            var ExpenseToDelete=_context.Expense.Where(e=>e.BudgetId==id).ToList();
+            var SavingToDelete=_context.Saving.Where(s=>s.BudgetId==id).ToList();
             _context.Budget.Remove(budget);
+            if (IncomeToDelete.count>0)
+                _context.Income.RemoveRange(IncomeToDelete);
+            if (ExpenseToDelete.count>0)
+                _context.Expense.RemoveRange(ExpenseToDelete);
+            if (SavingToDelete.count>0)
+                _context.Saving.RemoveRange(SavingToDelete);
             _context.SaveChanges();
             return budget;
         }
+
     }
 }
