@@ -24,6 +24,7 @@ namespace api.Data
 			modelBuilder.Entity<Income>().Property(i=>i.RecurringFlag).HasDefaultValue(false);
 			modelBuilder.Entity<Expense>().Property(e=>e.RecurringFlag).HasDefaultValue(false);
 			modelBuilder.Entity<Saving>().Property(s=>s.TotalSave).HasDefaultValue(0);
+			modelBuilder.Entity<User>().Entity<User>().HasIndex(u=>u.Email).IsUnique();
 		}
 	}
 	

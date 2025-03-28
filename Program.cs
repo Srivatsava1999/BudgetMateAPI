@@ -1,7 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using api.Data;
+using DotNetEnv;
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
-
+var jwtKey=Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+var jwtIssuer=Environment.GetEnvironmentVariable("JWT_ISSUER");
+var jwtAudience=Environment.GetEnvironmentVariable("JWT_AUDIENCE");
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options=>
@@ -11,6 +15,21 @@ builder.Services.AddScoped<BudgetServices>();
 builder.Services.AddScoped<ExpenseServices>();
 builder.Services.AddScoped<IncomeServices>();
 builder.Services.AddScoped<SavingServices>();
+builder.Services.AddAuthentication(options=>{
+    options.DefaultAuthenticateScheme=JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme=JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options=>{
+    options.TokenValidationParameters=new TokenValidationParameters
+    {
+        ValidateIssuer=true,
+        ValidateAudience=true,
+        ValidateLifetime=true,
+        ValidateIssuerSigningKey=true,
+        ValidIssuer=jwtIssuer,
+        ValidAudience=jwtAudience,
+        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,10 +42,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+// app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
