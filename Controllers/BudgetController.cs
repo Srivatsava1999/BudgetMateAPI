@@ -14,10 +14,12 @@ namespace api.Controllers{
             _service=service;
         }
         [HttpGet("{userid}")]
+        [Authorize]
         public ActionResult<IEnumerable<Budget>> GetBudgets(int userid){
             return Ok(_service.AllBudget(userid));
         }
         [HttpGet("{budgetid}/{userid}")]
+        [Authorize]
         public ActionResult<Budget> GetBudgetById(int budgetid,int userid)
         {
             var budget=_service.BudgetById(userid,budgetid);
@@ -27,12 +29,14 @@ namespace api.Controllers{
             return Ok(budget);
         }
         [HttpPost]
+        [Authorize]
         public ActionResult<Budget> CreateBudget(Budget budget)
         {
             _service.CreateBudget(budget);
             return CreatedAtAction(nameof(GetBudgetById), new{ budgetid=budget.BudgetId, userid=budget.UserId}, budget);
         }
         [HttpPut("{budgetid}")]
+        [Authorize]
         public IActionResult UpdateBudget(int budgetid, Budget updatedbudget)
         {
             var budget=_service.UpdateBudget(budgetid, updatedbudget);
@@ -41,6 +45,7 @@ namespace api.Controllers{
             return Ok();
         }
         [HttpDelete("{budgetid}")]
+        [Authorize]
         public IActionResult DeleteBudget(int budgetid)
         {
             var budget=_service.DeleteBudget(budgetid);

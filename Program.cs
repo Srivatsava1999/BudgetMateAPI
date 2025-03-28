@@ -30,6 +30,7 @@ builder.Services.AddAuthentication(options=>{
         IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
     };
 });
+builder.Services.AddScoped<AuthServices>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

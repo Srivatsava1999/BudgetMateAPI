@@ -1,4 +1,4 @@
-using System.ComponentBuilder.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace api.DTO{
     public class LoginResponse{

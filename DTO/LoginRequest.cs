@@ -1,10 +1,10 @@
-using System.ComponentBuilder.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace api.DTO{
     public class LoginRequest
     {
         [Required]
-        [Email Address]
+        [EmailAddress]
         public string Email{get;set;}
 
         [Required]

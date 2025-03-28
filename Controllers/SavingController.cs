@@ -14,10 +14,12 @@ namespace api.Controllers{
             _service=service;
         }
         [HttpGet("{BudgetId}")]
+        [Authorize]
         public ActionResult<IEnumerable<Saving>> GetSavings(int BudgetId){
             return Ok(_service.AllSaving(BudgetId));
         }
         [HttpGet("{Savingid}/{BudgetId}")]
+        [Authorize]
         public ActionResult<Saving> GetSavingById(int Savingid,int BudgetId)
         {
             var Saving=_service.SavingById(BudgetId,Savingid);
@@ -27,12 +29,14 @@ namespace api.Controllers{
             return Ok(Saving);
         }
         [HttpPost]
+        [Authorize]
         public ActionResult<Saving> CreateSaving(Saving Saving)
         {
             _service.CreateSaving(Saving);
             return CreatedAtAction(nameof(GetSavingById), new{ Savingid=Saving.SavingId, BudgetId=Saving.BudgetId}, Saving);
         }
         [HttpPut("{Savingid}")]
+        [Authorize]
         public IActionResult UpdateSaving(int Savingid, Saving updatedSaving)
         {
             var Saving=_service.UpdateSaving(Savingid, updatedSaving);
@@ -41,6 +45,7 @@ namespace api.Controllers{
             return Ok();
         }
         [HttpDelete("{Savingid}")]
+        [Authorize]
         public IActionResult DeleteSaving(int Savingid)
         {
             var Saving=_service.DeleteSaving(Savingid);

@@ -17,11 +17,13 @@ namespace api.Controllers
 
         }
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<User>> GetAllUsers()
         {
             return Ok(_service.AllUsers());
         }
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<User> GetUserById(int id)
         {
             var user=_service.UserById(id);
@@ -31,12 +33,14 @@ namespace api.Controllers
             return Ok(user);
         }
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult<User> CreateUser(User user)
         {
             _service.CreateUser(user);
             return CreatedAtAction(nameof(GetUserById), new{ id=user.UserId}, user);
         }
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult UpdateUser(int id, User updateduser)
         {
             var user=_service.UpdateUser(id, updateduser);
@@ -45,6 +49,7 @@ namespace api.Controllers
             return Ok();
         }
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteUser(int id)
         {
             var user=_service.DeleteUser(id);
