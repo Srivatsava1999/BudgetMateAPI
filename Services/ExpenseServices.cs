@@ -9,13 +9,13 @@ namespace api.Services{
     public class ExpenseServices{
         private readonly AppDbContext _context;
         private BudgetServices _BudgetService;
-        public ExpenseServices(AppDbContext context){
+        public ExpenseServices(AppDbContext context, BudgetServices BudgetService){
             _context=context;
             _BudgetService=BudgetService;
         }
         public List<Expense> AllExpense(int BudgetId){
             var ExpensePlan=_context.Expense.Where(i=>i.BudgetId==BudgetId).ToList();
-            return ExpensePlan ?? new List<Budget>();
+            return ExpensePlan ?? new List<Expense>();
         }
         public Expense ExpenseById(int budgetid, int Expenseid){
             var ExpensePlan=_context.Expense.Find(Expenseid);
@@ -37,7 +37,7 @@ namespace api.Services{
             
             Expense.ExpenseName=updates.ExpenseName;
             Expense.ExpenseAmount=updates.ExpenseAmount;
-            Expense.ExpenseCategory=updates.ExpenseCategory;
+            Expense.CategoryId=updates.CategoryId;
             Expense.ExpenseDescription=updates.ExpenseDescription;
             Expense.ExpenseDate=updates.ExpenseDate;
             Expense.RecurringFlag=updates.RecurringFlag;

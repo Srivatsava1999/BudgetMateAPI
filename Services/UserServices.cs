@@ -14,25 +14,24 @@ namespace api.Services{
             _BudgetService=BudgetService;
         }
         public List<User> UserAll(){
-            var users=_context.Users.ToList();
+            var users=_context.User.ToList();
             return users;
         }
         public User UserById(int id){
-            var user = _context.Users.Find(id);
+            var user = _context.User.Find(id);
             if(user==null)
                 return null;
             
             return user;
         }
-        public Void CreateUser(User user){
-            _context.Users.Add(user);
+        public void CreateUser(User user){
+            _context.User.Add(user);
             _context.SaveChanges();
         }
         public User UpdateUser(int id,User updates){
-            var user=_context.Users.Find(id);
+            var user=_context.User.Find(id);
             if(user==null)
                 return null;
-            user.Name=updates.Name;
             user.Password=updates.Password;
             user.Phone=updates.Phone;
             user.Email=updates.Email;
@@ -41,11 +40,11 @@ namespace api.Services{
             return user;
         }
         public User DeleteUser(int id){
-            var user=_context.Users.Find(id);
+            var user=_context.User.Find(id);
             if(user==null)
                 return null;
             var BudgetToDelete=_context.Budget.Where(b=>b.UserId==id).ToList();
-            _context.Users.Remove(user);
+            _context.User.Remove(user);
             if (BudgetToDelete.Count()>0)
                 _context.Budget.RemoveRange(BudgetToDelete);
             _context.SaveChanges();

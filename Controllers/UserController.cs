@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using api.Data;
 using api.Models;
 using api.Services;
@@ -20,7 +21,7 @@ namespace api.Controllers
         [Authorize]
         public ActionResult<IEnumerable<User>> GetAllUsers()
         {
-            return Ok(_service.AllUsers());
+            return Ok(_service.UserAll());
         }
         [HttpGet("{id}")]
         [Authorize]

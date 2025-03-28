@@ -12,8 +12,8 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250325044430_CreatedRestOfTheModels")]
-    partial class CreatedRestOfTheModels
+    [Migration("20250328205645_InitialCreate_V3")]
+    partial class InitialCreate_V3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,12 +70,11 @@ namespace api.Migrations
                     b.Property<int>("BudgetId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ExpenseAmount")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ExpenseCategory")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ExpenseAmount")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("ExpenseDate")
                         .HasColumnType("timestamp with time zone");
@@ -100,7 +99,93 @@ namespace api.Migrations
 
                     b.HasIndex("BudgetId");
 
+                    b.HasIndex("CategoryId");
+
                     b.ToTable("Expense");
+                });
+
+            modelBuilder.Entity("api.Models.ExpenseCategory", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("ExpenseCategory");
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1,
+                            Name = "Rent/Mortgage"
+                        },
+                        new
+                        {
+                            CategoryId = 2,
+                            Name = "Utilities"
+                        },
+                        new
+                        {
+                            CategoryId = 3,
+                            Name = "Groceries"
+                        },
+                        new
+                        {
+                            CategoryId = 4,
+                            Name = "Junk Foods"
+                        },
+                        new
+                        {
+                            CategoryId = 5,
+                            Name = "Dining Out"
+                        },
+                        new
+                        {
+                            CategoryId = 6,
+                            Name = "Healthcare"
+                        },
+                        new
+                        {
+                            CategoryId = 7,
+                            Name = "Transportation"
+                        },
+                        new
+                        {
+                            CategoryId = 8,
+                            Name = "Insurance"
+                        },
+                        new
+                        {
+                            CategoryId = 9,
+                            Name = "Entertainment"
+                        },
+                        new
+                        {
+                            CategoryId = 10,
+                            Name = "Education"
+                        },
+                        new
+                        {
+                            CategoryId = 11,
+                            Name = "Retail"
+                        },
+                        new
+                        {
+                            CategoryId = 12,
+                            Name = "Grooming/Personal Care"
+                        },
+                        new
+                        {
+                            CategoryId = 13,
+                            Name = "Other"
+                        });
                 });
 
             modelBuilder.Entity("api.Models.Income", b =>
@@ -193,6 +278,9 @@ namespace api.Migrations
 
                     b.HasKey("UserId");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
@@ -215,7 +303,15 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("api.Models.ExpenseCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Budget");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("api.Models.Income", b =>

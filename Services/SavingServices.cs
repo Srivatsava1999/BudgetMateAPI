@@ -15,7 +15,7 @@ namespace api.Services{
         }
         public List<Saving> AllSaving(int BudgetId){
             var SavingAccount=_context.Saving.Where(i=>i.BudgetId==BudgetId).ToList();
-            return SavingAccount ?? new List<Budget>();
+            return SavingAccount ?? new List<Saving>();
         }
         public Saving SavingById(int budgetid, int Savingid){
             var SavingAccount=_context.Saving.Find(Savingid);

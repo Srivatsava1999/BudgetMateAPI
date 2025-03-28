@@ -14,12 +14,13 @@ namespace api.Models{
         public DateTime ExpenseMonth{get;set;}=new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1);
         [Required]
         public DateTime ExpenseDate{get;set;}=DateTime.UtcNow;
-        [Required]
-        public required string ExpenseCategory{get;set;}
+        
         public string ExpenseDescription{get;set;}
         public bool RecurringFlag{get;set;}
         // Foreign Key
         public int BudgetId{get;set;}
         public Budget Budget{get;set;}
+        public int CategoryId{get;set;}
+        public ExpenseCategory Category{get;set;}
     }
 }

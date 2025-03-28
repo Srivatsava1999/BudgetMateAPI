@@ -1,17 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using api.Models;
 using api.Data;
-using api.Serivces;
+using api.Services;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace api.Services{
     public class BudgetServices{
         private readonly AppDbContext _context;
-        private SavingServices _SavingServices;
-        public BudgetServices(AppDbContext context, SavingServices SavingServices){
+        private readonly IServiceProvider _serviceProvider;
+
+        public BudgetServices(AppDbContext context, IServiceProvider serviceProvider){
             _context=context;
-            _SavingServices=SavingServices;
+            _serviceProvider=serviceProvider;
         }
         public List<Budget> AllBudget(int UserId){
             var BudgetPlan=_context.Budget.Where(b=>b.UserId==UserId).ToList();
@@ -35,8 +36,9 @@ namespace api.Services{
             budget.TotalIncome=updates.TotalIncome;
             budget.TotalExpense=updates.TotalExpense;
             budget.MonthlyNet=updates.TotalIncome - updates.TotalExpense;
-            var SavingAccount=_context.Saving.Where(s=>s.BudgetId==budget.BudgetId);
-            _SavingServices.UpdateSaving(SavingAccount.SavingId, SavingAccount);
+            var SavingAccount=_context.Saving.SingleOrDefault(s=>s.BudgetId==budget.BudgetId);
+            var savingService = _serviceProvider.GetService<SavingServices>();
+            savingService?.UpdateSaving(SavingAccount.SavingId, SavingAccount);
             _context.SaveChanges();
             return budget;
         }

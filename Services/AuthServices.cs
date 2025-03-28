@@ -12,7 +12,7 @@ namespace api.Services{
     public class AuthServices{
         private readonly AppDbContext _context;
         private readonly IConfiguration _config;
-        private readonly PasswordHasher<User> _hasher
+        private readonly PasswordHasher<User> _hasher;
         public AuthServices(AppDbContext context, IConfiguration config){
             _context=context;
             _config=config;
@@ -22,10 +22,10 @@ namespace api.Services{
             var user=_context.User.SingleOrDefault(u=>u.Email==request.Email);
             if(user==null)
                 return null;
-            var result=_hasher.VerifyHashedPassword(user, user.Password, Request.Password);
+            var result=_hasher.VerifyHashedPassword(user, user.Password, request.Password);
             if(result!=PasswordVerificationResult.Success)
                 return null;
-            var AccessToken=GenerateAccessToken(user);
+            var AccessToken=GenerateJwtToken(user);
             return new LoginResponse
             {
                 AccessToken=AccessToken,
@@ -63,10 +63,20 @@ namespace api.Services{
             var user=new User
             {
                 Email=request.Email,
-                Name=request.Name,
-                Phone=request.Phone
+                Phone=request.Phone,
+                Password=""
             };
-            user.Password = _hasher.HashPassword(user, request.Password);
+            user.Password=_hasher.HashPassword(user, request.Password);
+            _context.User.Add(user);
+            _context.SaveChanges();
+            var token=GenerateJwtToken(user);
+            return new LoginResponse
+            {
+                AccessToken=token,
+                UserId=user.UserId,
+                Email=user.Email
+            };
+            
         }
     }
     

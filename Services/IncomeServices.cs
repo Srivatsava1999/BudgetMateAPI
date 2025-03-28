@@ -15,7 +15,7 @@ namespace api.Services{
         }
         public List<Income> AllIncome(int BudgetId){
             var IncomePlan=_context.Income.Where(i=>i.BudgetId==BudgetId).ToList();
-            return IncomePlan ?? new List<Budget>();
+            return IncomePlan ?? new List<Income>();
         }
         public Income IncomeById(int budgetid, int Incomeid){
             var IncomePlan=_context.Income.Find(Incomeid);
